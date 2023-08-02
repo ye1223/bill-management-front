@@ -1,56 +1,53 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue'
-import { type FormInstance, type FormRules } from 'element-plus'
+import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 import usePaeticles from '@/hooks/useParticles'
 import { appJsonPost } from '@/api/request'
 import { LoginForm } from '@/ts/interfaces/login.interface'
 import { AppJsonPostDataResult } from '@/ts/interfaces/request.interface'
-
+import { TOKEN_KEY } from '@/constants'
+import { setItem } from '@/util/storage'
+import useUserInfoStore from '@/store/userInfoStore'
+import { useRouter } from 'vue-router'
 
 //表单绑定的响应式对象
 const loginForm = reactive<LoginForm>({
-	username: '',
-	password: ''
+	name: '111',
+	pwd: '111'
 })
 
-//表单的引用对象
+// 表单的引用对象
 const loginFormRef = ref<FormInstance>()
-
+// 表单校验
 const loginRules = reactive<FormRules<LoginForm>>({
-	username: [
+	name: [
 		{ required: true, message: '请输入用户名', trigger: 'blur' },
 		{ min: 3, max: 10, message: '请输入3-10位用户名', trigger: 'blur' }
 	],
-	password: [
+	pwd: [
 		{ required: true, message: '请输入密码', trigger: 'blur' },
 		{ min: 3, max: 10, message: '请输入3-10位密码', trigger: 'blur' }
 	]
 })
 
-//提交表单函数
-/* const submitForm = () => {
-	//1.校验表单
-	loginFormRef.value.validate(valid => {})
-	//2.拿到表单内容，提交后台
-	//3.设置token值
-	//localStorage.setItem('token','this is just a test token')
-} */
-
-
+const userInfoStore = useUserInfoStore()
+const router = useRouter()
 const submitForm = async (formEl: FormInstance | undefined) => {
-	console.log('1111', loginFormRef)
 	if (!formEl) return
 	await formEl.validate((valid, fields) => {
 		if (valid) {
-			// console.log('submit!', valid, fields, loginForm)
 			appJsonPost<AppJsonPostDataResult>({
-				url: '/api/user/login',
-				data: loginForm
-			}).then((res) => {
-				console.log(res.data.token)
-			}).catch(err=>{
-				console.log(err)
+				url: '/user/login',
+				data: { ...loginForm }
 			})
+				.then(res => {
+					userInfoStore.changeUserInfo(res.data)
+					setItem(TOKEN_KEY, res.data.token)
+					router.replace('/category/manage')
+				})
+				.catch(err => {
+					ElMessage.error(err.msg)
+				})
 		} else {
 			console.log('error submit!', fields)
 		}
@@ -78,17 +75,17 @@ const { options, particlesInit, particlesLoaded } = usePaeticles()
 				label-width="80px"
 				class="loginForm"
 			>
-				<el-form-item label="用户名" prop="username">
+				<el-form-item label="用户名" prop="name">
 					<el-input
-						v-model="loginForm.username"
+						v-model="loginForm.name"
 						type="text"
 						autocomplete="off"
 					/>
 				</el-form-item>
 
-				<el-form-item label="密码" prop="password">
+				<el-form-item label="密码" prop="pwd">
 					<el-input
-						v-model="loginForm.password"
+						v-model="loginForm.pwd"
 						type="password"
 						autocomplete="off"
 					/>

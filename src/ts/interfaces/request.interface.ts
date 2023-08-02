@@ -1,4 +1,5 @@
 import { LoginForm } from "./login.interface"
+import { UserInfo } from "./userinfo.interface"
 
 type TypeId = {
 	id: string
@@ -21,12 +22,15 @@ export interface ApiAppJsonPostParams {
 
 // 返回结果
 export interface ApiResult<T> {
+	attributes: any
 	code: number
-	msg: string
 	data: T
+	failed: boolean
+	success: boolean
+	msg: string
+	total: any
 }
 
 // ApiResult data 返回结果
-export interface AppJsonPostDataResult {
-	token: string
+export interface AppJsonPostDataResult extends UserInfo {
 }

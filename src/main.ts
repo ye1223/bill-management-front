@@ -13,4 +13,4 @@ createApp(App)
 .use(ElementPlus)
 .mount('#app')
 
-console.log(import.meta.env)
+// console.log(import.meta.env.BASE_URL)

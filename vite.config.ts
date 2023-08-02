@@ -5,8 +5,9 @@ import path from 'path'
 // https://vitejs.dev/config/
 export default defineConfig(({ mode, command }) => {
 	// console.log(mode, command)
-	// const env = loadEnv(mode, process.cwd());
+	const env = loadEnv(mode, process.cwd())
 	// console.log(env, process.cwd()) //项目绝对地址
+	const BASE_URL = env.VITE_API_BASE_URL
 
 	return {
 		plugins: [vue()],
@@ -19,7 +20,8 @@ export default defineConfig(({ mode, command }) => {
 		server: {
 			proxy: {
 				'/api': {
-					target: 'http://localhost:8090',
+					// target: 'http://localhost:8090',
+					target: BASE_URL,
 					// target: 'http://tiu4ep.natappfree.cc/',
 					changeOrigin: true,
 					rewrite: path => path.replace(/^\/api/, '')
