@@ -2,8 +2,14 @@
 import { ref, reactive, onMounted } from 'vue'
 import { Upload } from '@element-plus/icons-vue'
 import AddCategory from '@/components/category/AddCategory.vue'
-import { appJsonPost } from '@/api/request'
-import { SearchForm, TableData, TableList } from '@/ts/interfaces/catogory.interface'
+import UpdateCategory from '@/components/category/UpdateCategory.vue'
+import { appJsonPost, formGet } from '@/api/request'
+import {
+	SearchForm,
+	TableData,
+	TableList
+} from '@/ts/interfaces/catogory.interface'
+import { ElMessage } from 'element-plus'
 
 let addDialogShow = ref(false)
 const openAddDialog = () => {
@@ -16,7 +22,7 @@ const searchFormData = reactive<SearchForm>({
 	searchWord: ''
 })
 
-onMounted(()=>{
+onMounted(() => {
 	loadTable()
 })
 
@@ -29,6 +35,7 @@ const loadTable = () => {
 	})
 }
 const handleSearch = () => {
+	tableData.list = []
 	loadTable()
 }
 const tableData = reactive<TableData>({
@@ -36,19 +43,43 @@ const tableData = reactive<TableData>({
 	list: []
 })
 
-
-const handleEdit = () => {
-
+const updateId = ref(-1)
+const handleEdit = (_: number, row: any) => {
+	updateDialogShow.value = true
+	updateId.value = row.id
 }
 
-const handleDelete = () => {
+const updateDialogShow = ref(false)
+const handleUpdateRefresh = () => {
+	updateDialogShow.value = false
+	tableData.list = []
+	loadTable()
+}
 
+const handleAddRefresh = () => {
+	tableData.list = []
+	loadTable()
+}
+
+const handleDelete = (_: number, row: any) => {
+	formGet({
+		url: '/category/deleteById',
+		params: { id: row.id }
+	})
+		.then(res => {
+			ElMessage.success(res.msg)
+			tableData.list = []
+			loadTable()
+		})
+		.catch(err => {
+			ElMessage.error(err.msg)
+		})
 }
 </script>
 
 <template>
 	<section class="title-bar">
-		<el-row>
+		<el-row justify="space-around">
 			<el-col :span="2">
 				<el-button
 					@click="openAddDialog"
@@ -98,29 +129,46 @@ const handleDelete = () => {
 			</el-table-column>
 			<el-table-column prop="natureName" label="所属大分类">
 			</el-table-column>
-			<el-table-column label="操作">
-				<template slot-scope="scope">
+			<el-table-column label="操作" fixed="right">
+				<template #default="scope">
 					<el-button
 						type="primary"
-						size="mini"
-						icon="el-icon-edit"
-						@click="handleEdit()"
-						>编辑
+						size="small"
+						@click="handleEdit(scope.$index, scope.row)"
+					>
+						编辑
 					</el-button>
-					<el-button
-						type="danger"
-						size="mini"
-						icon="el-icon-delete"
-						@click="
-							handleDelete()
+					<el-popconfirm
+						title="确定删除此项?"
+						confirm-button-text="是"
+						cancel-button-text="否"
+						@confirm="
+							handleDelete(scope.$index, scope.row)
 						"
-						>删除
-					</el-button>
+					>
+						<template #reference>
+							<el-button
+								type="danger"
+								size="small"
+							>
+								删除
+							</el-button>
+						</template>
+					</el-popconfirm>
 				</template>
 			</el-table-column>
 		</el-table>
 	</section>
-	<AddCategory v-model:addDialogShow="addDialogShow" />
+
+	<AddCategory
+		v-model:addDialogShow="addDialogShow"
+		@refreshTable="handleAddRefresh"
+	/>
+	<UpdateCategory
+		v-model:updateDialogShow="updateDialogShow"
+		:updateId="updateId"
+		@refreshTable="handleUpdateRefresh"
+	/>
 </template>
 
 <style lang=""></style>

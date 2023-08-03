@@ -2,7 +2,7 @@ import { LoginForm } from "./login.interface"
 import { UserInfo } from "./userinfo.interface"
 
 type TypeId = {
-	id: string
+	id: number
 }
 // 参数
 export interface ApiFormGetParams {

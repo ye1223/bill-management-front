@@ -7,11 +7,14 @@ import {
 	AddCategoryForm
 } from '@/ts/interfaces/catogory.interface'
 import { appJsonPost } from '@/api/request'
+// import useSelectForm from '@/hooks/useSelectForm'
+
 const props = defineProps<{
 	addDialogShow: boolean
 }>()
 const emit = defineEmits<{
-	'update:addDialogShow': [addDialogShow: boolean] // 具名元组语法
+	'update:addDialogShow': [addDialogShow: boolean], // 具名元组语法
+	'refreshTable': []
 }>()
 
 // 关闭dialog
@@ -42,6 +45,7 @@ onMounted(() => {
 		selectForm.push(...res.data)
 	})
 })
+// const selectForm = useSelectForm()
 
 const handleCancel = (formEl: FormInstance | undefined) => {
 	if (!formEl) return
@@ -59,6 +63,7 @@ const onSubmit = (formEl: FormInstance | undefined) => {
 			})
 				.then(res => {
 					ElMessage.success(res.data)
+					emit('refreshTable')
 					emit('update:addDialogShow', false)
 				})
 				.catch(err => {

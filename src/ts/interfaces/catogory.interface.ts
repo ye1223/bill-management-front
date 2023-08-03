@@ -18,11 +18,11 @@ export interface SearchForm {
 }
 
 export interface TableList {
-	creatorId: number
+	creatorId?: number
 	id: number
 	name: string
 	natureId: number
-	natureName: string
+	natureName?: string
 }
 // 表格属性
 export interface TableData {
