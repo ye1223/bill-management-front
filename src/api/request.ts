@@ -7,9 +7,9 @@ import {
 import {
 	formGetInstance,
 	formPostInstance,
-	appJsonPostInstance 
+	appJsonPostInstance
 } from '@/util/request'
-import { AxiosResponse } from 'axios'
+// import { AxiosResponse } from 'axios'
 
 export async function formGet<T>(
 	config: ApiFormGetParams
@@ -17,7 +17,8 @@ export async function formGet<T>(
 	const response = await formGetInstance.get<ApiResult<T>>(config.url, {
 		params: config.params
 	})
-	return response.data
+	//@ts-ignore
+	return response
 }
 
 export async function formPost<T>(
@@ -26,18 +27,19 @@ export async function formPost<T>(
 	const response = await formPostInstance.post<ApiResult<T>>(config.url, {
 		params: config.data
 	})
+	
 	return response.data
 }
 
-// T 指定data数据的类型
-export async function appJsonPost<T>(
-	config: ApiAppJsonPostParams
+// P 发送的data参数类型
+// T 返回data数据的类型
+export async function appJsonPost<P, T>(
+	config: ApiAppJsonPostParams<P>
 ): Promise<ApiResult<T>> {
 	const response = await appJsonPostInstance.post<ApiResult<T>>(
 		config.url, // 请求地址
 		config.data // payload参数
 	)
-	console.log('response' ,response)
 	// @ts-ignore
 	return response
 }

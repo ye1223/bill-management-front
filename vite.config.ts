@@ -27,6 +27,15 @@ export default defineConfig(({ mode, command }) => {
 					rewrite: path => path.replace(/^\/api/, '')
 				}
 			}
+		},
+		css: {
+			preprocessorOptions: {
+				scss: {
+					// 全局引入sass
+					additionalData:
+						'@import "@/assets/css/globalVar.scss";@import "@/assets/css/globalMixin.scss";'
+				}
+			}
 		}
 	}
 })

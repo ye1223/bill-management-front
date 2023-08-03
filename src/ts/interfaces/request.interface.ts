@@ -15,16 +15,17 @@ export interface ApiFormPostParams {
 	data: TypeId
 }
 
-export interface ApiAppJsonPostParams {
+export interface ApiAppJsonPostParams<P> {
 	url: string
-	data: LoginForm
+	data: P
 }
+
 
 // 返回结果
 export interface ApiResult<T> {
 	attributes: any
 	code: number
-	data: T
+	data: T 
 	failed: boolean
 	success: boolean
 	msg: string
@@ -32,5 +33,4 @@ export interface ApiResult<T> {
 }
 
 // ApiResult data 返回结果
-export interface AppJsonPostDataResult extends UserInfo {
-}
+export interface LoginResult extends UserInfo {}

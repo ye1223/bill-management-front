@@ -7,10 +7,10 @@ import router from './router'
 import App from './App.vue'
 
 createApp(App)
+.use(ElementPlus)
 .use(pinia)
 .use(router)
 .use(Particles)
-.use(ElementPlus)
 .mount('#app')
 
 // console.log(import.meta.env.BASE_URL)

@@ -4,7 +4,7 @@ import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 import usePaeticles from '@/hooks/useParticles'
 import { appJsonPost } from '@/api/request'
 import { LoginForm } from '@/ts/interfaces/login.interface'
-import { AppJsonPostDataResult } from '@/ts/interfaces/request.interface'
+import { LoginResult } from '@/ts/interfaces/request.interface'
 import { TOKEN_KEY } from '@/constants'
 import { setItem } from '@/util/storage'
 import useUserInfoStore from '@/store/userInfoStore'
@@ -36,7 +36,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 	if (!formEl) return
 	await formEl.validate((valid, fields) => {
 		if (valid) {
-			appJsonPost<AppJsonPostDataResult>({
+			appJsonPost<LoginForm ,LoginResult>({
 				url: '/user/login',
 				data: { ...loginForm }
 			})
@@ -133,7 +133,7 @@ const { options, particlesInit, particlesLoaded } = usePaeticles()
 	display: block;
 }
 
-::v-deep .el-form-item__label {
+:deep .el-form-item__label {
 	font-size: 15px;
 }
 </style>
