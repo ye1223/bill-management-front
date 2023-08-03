@@ -4,7 +4,6 @@
 
 <template>
     <div>
-        BillHome
         <router-view />
     </div>
 </template>

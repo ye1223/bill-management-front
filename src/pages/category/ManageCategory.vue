@@ -27,15 +27,17 @@ onMounted(() => {
 })
 
 const loadTable = () => {
+	tableData.list = []
 	appJsonPost<SearchForm, TableList[]>({
 		url: '/category/selectPage',
 		data: searchFormData
 	}).then(res => {
 		tableData.list.push(...res.data)
+		//@ts-ignore
+		tableData.total = res.total
 	})
 }
 const handleSearch = () => {
-	tableData.list = []
 	loadTable()
 }
 const tableData = reactive<TableData>({
@@ -52,12 +54,10 @@ const handleEdit = (_: number, row: any) => {
 const updateDialogShow = ref(false)
 const handleUpdateRefresh = () => {
 	updateDialogShow.value = false
-	tableData.list = []
 	loadTable()
 }
 
 const handleAddRefresh = () => {
-	tableData.list = []
 	loadTable()
 }
 
@@ -68,12 +68,21 @@ const handleDelete = (_: number, row: any) => {
 	})
 		.then(res => {
 			ElMessage.success(res.msg)
-			tableData.list = []
 			loadTable()
 		})
 		.catch(err => {
 			ElMessage.error(err.msg)
 		})
+}
+
+// 分页
+const handlePageSizeChange = (val: number) => {
+	searchFormData.pageSize = val
+	loadTable()
+}
+const handlePageNowChange = (val: number) => {
+	searchFormData.pageNow = val
+	loadTable()
 }
 </script>
 
@@ -147,10 +156,7 @@ const handleDelete = (_: number, row: any) => {
 						"
 					>
 						<template #reference>
-							<el-button
-								type="danger"
-								size="small"
-							>
+							<el-button type="danger" size="small">
 								删除
 							</el-button>
 						</template>
@@ -158,6 +164,20 @@ const handleDelete = (_: number, row: any) => {
 				</template>
 			</el-table-column>
 		</el-table>
+	</section>
+
+	<!--分页-->
+	<section class="page">
+		<el-pagination
+			@size-change="handlePageSizeChange"
+			@current-change="handlePageNowChange"
+			:current-page="searchFormData.pageNow"
+			:page-sizes="[5, 10, 15, 20]" 
+			:page-size="searchFormData.pageSize"
+			layout="total, sizes, prev, pager, next, jumper"
+			:total="tableData.total"
+		>
+		</el-pagination>
 	</section>
 
 	<AddCategory
