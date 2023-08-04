@@ -1,5 +1,5 @@
-import { LoginForm } from "./login.interface"
-import { UserInfo } from "./userinfo.interface"
+// import { LoginForm } from './login.interface'
+import { UserInfo } from './userinfo.interface'
 
 type TypeId = {
 	id: number
@@ -20,12 +20,18 @@ export interface ApiAppJsonPostParams<P> {
 	data: P
 }
 
+// 账单管理的属性 收入-支出-区间结余
+export interface Attributes {
+	sectionRemain: number
+	totalIn: number
+	totalOut: number
+}
 
 // 返回结果
 export interface ApiResult<T> {
-	attributes: any
+	attributes: Attributes
 	code: number
-	data: T 
+	data: T
 	failed: boolean
 	success: boolean
 	msg: string

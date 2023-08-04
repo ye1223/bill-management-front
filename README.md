@@ -104,4 +104,10 @@ VITE_API_BASE_URL = http://localhost:8090
 > }
 > ```
 
+
+```js
+import locale from 'element-plus/es/locale/lang/zh-cn'
+
+createApp(App).use(store).use(router).use(ElementPlus).use(ElementPlus, {locale}).mount('#app')
+```
 ......

@@ -1,10 +1,15 @@
 <template>
 	<div>
 		<!-- App -->
-		<router-view></router-view>
+		<!-- <ElConfigProvider :locale="zhCn"> -->
+			<router-view></router-view>
+		<!-- </ElConfigProvider> -->
+		
 	</div>
 </template>
 <script lang="ts" setup>
+// import { ElConfigProvider } from 'element-plus'
+// import zhCn from 'element-plus/lib/locale/lang/zh-cn'
 import { onMounted } from 'vue'
 import useUserInfoStore from './store/userInfoStore'
 import { setItem } from './util/storage'
