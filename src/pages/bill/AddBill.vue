@@ -35,6 +35,10 @@ onMounted(() => {
 	})
 })
 
+const handleBack = () => {
+	router.back()
+}
+
 const onSubmit = (formEl: FormInstance | undefined) => {
 	if (!formEl) return
 	formEl.validate((valid, fields) => {
@@ -107,7 +111,7 @@ const onSubmit = (formEl: FormInstance | undefined) => {
 				</el-form-item>
 
 				<el-form-item>
-					<el-button type="primary" size="mini" @click=""
+					<el-button type="primary" size="mini" @click="handleBack"
 						>返回</el-button
 					>
 					<el-button
