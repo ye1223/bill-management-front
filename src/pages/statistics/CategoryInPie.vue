@@ -3,12 +3,11 @@ import { onBeforeMount, reactive, ref } from 'vue'
 import * as echarts from 'echarts'
 import { appJsonPost, formGet } from '@/api/request'
 import { ElMessage } from 'element-plus'
-import { CategoryInPie } from '@/ts/interfaces/statistics.interface'
+import { CategoryPie } from '@/ts/interfaces/statistics.interface'
 
 const searchFormData = reactive({
 	timeRangeArr: []
 })
-console.log('1111')
 
 // 获取默认时间区间
 const getDefaultTimeRange = () => {
@@ -16,7 +15,6 @@ const getDefaultTimeRange = () => {
 		url: '/statistics/getDefaultTimeRange'
 	}).then(res => {
 		searchFormData.timeRangeArr = [...res.data]
-		console.log(111, res)
 		loadChart()
 	})
 }
@@ -80,7 +78,7 @@ const updateTrend = () => {
 		return
 	}
 	if (searchFormData.timeRangeArr.length === 2) {
-		appJsonPost<any, CategoryInPie>({
+		appJsonPost<any, CategoryPie>({
 			url: '/statistics/loadCategoryPie',
 			data: {
 				startDate: searchFormData.timeRangeArr[0],
@@ -89,7 +87,6 @@ const updateTrend = () => {
 			}
 		})
 			.then(res => {
-				console.log(res)
 				options.series = [
 					{
 						name: '收入分类统计',

@@ -19,8 +19,8 @@ export interface RankData {
 	xAxisData: string[]
 }
 
-// CategoryInPie 返回数据
-export interface CategoryInPie {
+// CategoryPie 返回数据
+export interface CategoryPie {
 	seriesData: {
 		name: string
 		type: string
