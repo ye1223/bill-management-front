@@ -3,8 +3,10 @@ import {
 	HomeFilled,
 	InfoFilled,
 	UserFilled,
+	Tools,
 	FolderOpened,
 	GoodsFilled,
+	Shop,
     Unlock
 } from '@element-plus/icons-vue'
 
@@ -27,7 +29,7 @@ const logout = () => {
 		</el-menu-item>
 
 		<el-menu-item index="/bill/manage">
-			<el-icon><HomeFilled /></el-icon>
+			<el-icon><Tools /></el-icon>
 			<span slot="title">账单管理</span>
 		</el-menu-item>
 
@@ -48,12 +50,12 @@ const logout = () => {
 			</el-menu-item>
 
 			<el-menu-item index="/statistics/categoryInPie">
-				<el-icon><GoodsFilled /></el-icon>
+				<el-icon><Shop /></el-icon>
 				<template #title>收入分类统计</template>
 			</el-menu-item>
 
 			<el-menu-item index="/statistics/categoryCostPie">
-				<i class="el-icon-goods"></i>
+				<el-icon><GoodsFilled /></el-icon>
 				<span slot="title">消费分类统计</span>
 			</el-menu-item>
 		</el-sub-menu>
