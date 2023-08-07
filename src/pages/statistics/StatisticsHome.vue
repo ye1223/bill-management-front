@@ -1,14 +1,7 @@
-<script lang="ts" setup>
-
-</script>
+<script lang="ts" setup></script>
 
 <template>
-    <div>
-        stastchome
-        <router-view />
-    </div>
+	<router-view />
 </template>
 
-<style lang="">
-    
-</style>
+<style lang=""></style>

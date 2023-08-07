@@ -75,10 +75,12 @@ const handleDelete = (_: number, row: BillTableInfo) => {
 		})
 }
 
+// 一页显示条数
 const handlePageSizeChange = (val: number) => {
 	searchFormData.pageSize = val
 	loadTable()
 }
+// 当前页
 const handlePageNowChange = (val: number) => {
 	searchFormData.pageNow = val
 	loadTable()
