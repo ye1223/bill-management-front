@@ -15,7 +15,7 @@ const useUserInfoStore = defineStore('userInfo', () => {
 					realName: ''
 			  }
 	)
-	const changeUserInfo = (payload: any) => {
+	const changeUserInfo = (payload: UserInfo) => {
 		Object.assign(userInfo, payload)
 	}
 	return {

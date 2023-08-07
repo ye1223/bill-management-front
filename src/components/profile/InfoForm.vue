@@ -1,7 +1,12 @@
 <script lang="ts" setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onBeforeMount } from 'vue'
 import { UserInfo } from '@/ts/interfaces/userinfo.interface'
 import { FormInstance, FormRules } from 'element-plus'
+import useUserInfoStore from '@/store/userInfoStore'
+
+const props = defineProps<{
+	disabled: boolean
+}>()
 
 const infoForm = reactive<UserInfo>({
 	id: '',
@@ -17,14 +22,12 @@ const infoFormRules = reactive<FormRules<UserInfo>>({
 	realName: [{ required: true, message: '请输入用户名', trigger: 'blur' }]
 })
 
-// const onSubmit = () => {
-//     // 表单验证提交
-// }
-
-// const emit = defineEmits<{
-// 	// change: [id: number] // 具名元组语法
-// 	updateData: []
-// }>()
+// 挂载用户信息于表单
+const userInfoStore = useUserInfoStore()
+const userinfo = userInfoStore.userInfo
+onBeforeMount(() => {
+	Object.assign(infoForm, userinfo)
+})
 </script>
 
 <template>
@@ -33,20 +36,28 @@ const infoFormRules = reactive<FormRules<UserInfo>>({
 		:model="infoForm"
 		label-width="100px"
 		label-position="right"
-		ref="updateForm"
+		ref="infoFormRef"
 	>
 		<el-form-item label="用户编号:">
 			<el-input v-model="infoForm.id" disabled></el-input>
 		</el-form-item>
 		<el-form-item label="昵称:" prop="nickName">
-			<el-input v-model="infoForm.nickName" clearable></el-input>
+			<el-input
+				v-model="infoForm.nickName"
+				clearable
+				:disabled="props.disabled"
+			></el-input>
 		</el-form-item>
 		<el-form-item label="姓名:" prop="realName">
-			<el-input v-model="infoForm.realName" clearable></el-input>
+			<el-input
+				v-model="infoForm.realName"
+				clearable
+				:disabled="props.disabled"
+			></el-input>
 		</el-form-item>
 		<el-form-item>
 			<div>
-				<slot :infoForm="infoForm"></slot>
+				<slot name="main" :infoForm="infoForm" :infoFormRef="infoFormRef"></slot>
 			</div>
 		</el-form-item>
 	</el-form>
