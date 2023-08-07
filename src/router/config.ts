@@ -124,7 +124,7 @@ const routes: RouteRecordRaw[] = [
 						name: 'CategoryInPie',
 						component: () =>
 							import(
-								'@/pages/statistics/CategoryCostPie.vue'
+								'@/pages/statistics/CategoryInPie.vue'
 							),
 						meta: {
 							title: '收入分类统计'
@@ -135,7 +135,7 @@ const routes: RouteRecordRaw[] = [
 						name: 'CategoryCostPie',
 						component: () =>
 							import(
-								'@/pages/statistics/CategoryInPie.vue'
+								'@/pages/statistics/CategoryCostPie.vue'
 							),
 						meta: {
 							title: '消费分类统计'

@@ -18,3 +18,23 @@ export interface RankData {
 	seriesData: number[]
 	xAxisData: string[]
 }
+
+// CategoryInPie 返回数据
+export interface CategoryInPie {
+	seriesData: {
+		name: string
+		type: string
+		radius: string
+		data: {
+			value: number
+			name: string
+		}[]
+		emphasis: {
+			itemStyle: {
+				shadowBlur: number
+				shadowOffsetX: number
+				shadowColor: string
+			}
+		}
+	}[]
+}
