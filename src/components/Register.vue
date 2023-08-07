@@ -52,6 +52,7 @@ const onSuccess = () => {
 	})
 		.then(res => {
 			isShow.value = !isShow.value
+            emit('update:registerDiaVisible', false)
 			ElMessage.success(res.data)
 		})
 		.catch(err => {
