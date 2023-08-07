@@ -10,6 +10,7 @@ export default defineConfig(({ mode, command }) => {
 	const BASE_URL = env.VITE_API_BASE_URL
 
 	return {
+		base: './',
 		plugins: [vue()],
 		// envPrefix:"APP_",//APP_  默认是VITE_为开头名
 		resolve: {
