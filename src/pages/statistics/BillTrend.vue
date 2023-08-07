@@ -3,7 +3,7 @@ import { appJsonPost, formGet } from '@/api/request'
 import { reactive, onBeforeMount, ref } from 'vue'
 import * as echarts from 'echarts'
 import { ElMessage } from 'element-plus'
-// import { TimeRange } from '@/ts/interfaces/statistics.interface'
+import { BillTrend } from '@/ts/interfaces/statistics.interface'
 const searchFormData = reactive({
 	timeRangeArr: []
 })
@@ -23,7 +23,6 @@ onBeforeMount(() => {
 
 // 图表HTML节点
 const chart = ref<HTMLDivElement>()
-console.log('catdaksjdliwq', chart)
 
 let trendChart: echarts.ECharts
 const options = {
@@ -75,7 +74,7 @@ const loadTrend = () => {
 	trendChart = echarts.init(chart.value)
 	// true:表示不进行合并,全部更新，老的删除
 	trendChart.setOption(options, true)
-    updateTrend()
+	updateTrend()
 }
 // 更新图表
 const updateTrend = () => {
@@ -85,16 +84,23 @@ const updateTrend = () => {
 		return
 	}
 	if (searchFormData.timeRangeArr.length === 2) {
-        console.log(searchFormData.timeRangeArr[0])
-        appJsonPost({
-            url: '/statistics/loadBillTrend',
-            data: {
-              'startDate': searchFormData.timeRangeArr[0],
-              'endDate': searchFormData.timeRangeArr[1],
-            }
-        }).then(res=>{
-            console.log(res)
-        })
+		appJsonPost<any, BillTrend>({
+			url: '/statistics/loadBillTrend',
+			data: {
+				startDate: searchFormData.timeRangeArr[0],
+				endDate: searchFormData.timeRangeArr[1]
+			}
+		})
+			.then(res => {
+				options.legend.data = res.data.legendData
+				options.xAxis.data = res.data.xAxisData
+				options.series = res.data.series
+				// 设置真实数据
+				trendChart.setOption(options, true)
+			})
+			.catch(err => {
+				ElMessage.error(err.msg)
+			})
 	}
 }
 </script>
