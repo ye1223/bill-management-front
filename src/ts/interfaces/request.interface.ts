@@ -10,9 +10,9 @@ export interface ApiFormGetParams {
 	params?: TypeId
 }
 
-export interface ApiFormPostParams {
+export interface ApiFormPostParams<P> {
 	url: string
-	data: TypeId
+	data: P
 }
 
 export interface ApiAppJsonPostParams<P> {

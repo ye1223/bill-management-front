@@ -21,14 +21,15 @@ export async function formGet<T>(
 	return response
 }
 
-export async function formPost<T>(
-	config: ApiFormPostParams
+export async function formPost<P, T>(
+	config: ApiFormPostParams<P>
 ): Promise<ApiResult<T>> {
-	const response = await formPostInstance.post<ApiResult<T>>(config.url, {
-		params: config.data
-	})
-	
-	return response.data
+	const response = await formPostInstance.post<ApiResult<T>>(
+		config.url,
+		config.data
+	)
+	// @ts-ignore
+	return response
 }
 
 // P 发送的data参数类型

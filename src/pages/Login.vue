@@ -9,6 +9,7 @@ import { TOKEN_KEY } from '@/constants'
 import { setItem } from '@/util/storage'
 import useUserInfoStore from '@/store/userInfoStore'
 import { useRouter } from 'vue-router'
+import Register from '@/components/Register.vue'
 
 //表单绑定的响应式对象
 const loginForm = reactive<LoginForm>({
@@ -36,7 +37,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 	if (!formEl) return
 	await formEl.validate((valid, fields) => {
 		if (valid) {
-			appJsonPost<LoginForm ,LoginResult>({
+			appJsonPost<LoginForm, LoginResult>({
 				url: '/user/login',
 				data: { ...loginForm }
 			})
@@ -55,6 +56,11 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 }
 
 const { options, particlesInit, particlesLoaded } = usePaeticles()
+
+const registerDiaVisible = ref(false)
+const openRegisterDia = () => {
+	registerDiaVisible.value = true
+}
 </script>
 
 <template>
@@ -91,6 +97,15 @@ const { options, particlesInit, particlesLoaded } = usePaeticles()
 					/>
 				</el-form-item>
 
+				<div style="text-align: right; margin: -15px 0 15px 0">
+					<el-link
+						@click.native="openRegisterDia"
+						type="primary"
+					>
+						还没有账号，立即注册
+					</el-link>
+				</div>
+
 				<el-form-item>
 					<el-button
 						type="primary"
@@ -100,6 +115,7 @@ const { options, particlesInit, particlesLoaded } = usePaeticles()
 				</el-form-item>
 			</el-form>
 		</div>
+		<Register v-model:registerDiaVisible="registerDiaVisible" />
 	</div>
 </template>
 

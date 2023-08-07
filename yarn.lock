@@ -1197,6 +1197,11 @@ vue3-particles@^2.11.1:
     tsparticles-engine "^2.11.1"
     vue "^3.3.4"
 
+vue3-puzzle-vcode@^1.0.15:
+  version "1.0.15"
+  resolved "https://registry.npmmirror.com/vue3-puzzle-vcode/-/vue3-puzzle-vcode-1.0.15.tgz#ae0fc82c25effc4e3c23c7e4bcf06530f32581c5"
+  integrity sha512-nfvHYBuuNHJ8G/jRkptf+1FSG/3aGOu+lnVQyfgJE7Be27JXFPP73KfxJtzrNmF/8rsG9lOQmvxN64FIMkxu9Q==
+
 vue@^3.3.4:
   version "3.3.4"
   resolved "https://registry.npmmirror.com/vue/-/vue-3.3.4.tgz"
