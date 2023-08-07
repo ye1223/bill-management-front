@@ -2,8 +2,13 @@
 import { useRouter } from 'vue-router'
 import { ArrowDown } from '@element-plus/icons-vue'
 import useUserInfoStore from '@/store/userInfoStore'
+import useUpdatePwdStore from '@/store/useUpdatePwdStore'
+import UpdatePwd from '@/components/profile/UpdatePwd.vue'
+
 const store = useUserInfoStore()
 const router = useRouter()
+
+const updatePwdStore = useUpdatePwdStore()
 
 // 下拉框选项
 const handleCommand = (command: string) => {
@@ -12,6 +17,7 @@ const handleCommand = (command: string) => {
 		router.replace('/profile/info')
 	} else if (command === 'pwd') {
 		//
+		updatePwdStore.changeVisibility()
 	}
 }
 </script>
@@ -46,6 +52,7 @@ const handleCommand = (command: string) => {
 			</el-dropdown>
 		</el-col>
 	</el-row>
+	<UpdatePwd />
 </template>
 
 <style lang="scss" scoped>

@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { clearStorage } from '@/util/storage'
 import {
 	HomeFilled,
 	InfoFilled,
@@ -7,12 +8,15 @@ import {
 	FolderOpened,
 	GoodsFilled,
 	Shop,
-    Unlock
+	Unlock
 } from '@element-plus/icons-vue'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 // 退出
 const logout = () => {
-
+	clearStorage()
+	router.replace('/login')
 }
 </script>
 
@@ -60,11 +64,15 @@ const logout = () => {
 			</el-menu-item>
 		</el-sub-menu>
 
-		<div @click="logout">
-			<el-menu-item>
-				<el-icon><Unlock /></el-icon>
-				<span slot="title">退出</span>
-			</el-menu-item>
+		<div>
+			<el-popconfirm title="确定要退出吗？" @confirm="logout">
+				<template #reference>
+					<el-menu-item>
+						<el-icon><Unlock /></el-icon>
+						<span slot="title">退出</span>
+					</el-menu-item>
+				</template>
+			</el-popconfirm>
 		</div>
 	</el-menu>
 </template>
@@ -77,7 +85,7 @@ const logout = () => {
 	/*css修改element-ui样式不生效,通过>>>深层穿透指定;否则需要去掉scoped*/
 	.el-submenu div.el-submenu__title:hover {
 		background-color: $color-stress !important;
-        color: $color-base;
+		color: $color-base;
 	}
 
 	/*菜单激活时的背景*/
@@ -85,7 +93,7 @@ const logout = () => {
 	.el-menu-item:hover,
 	.el-menu-item.is-active {
 		background-color: $color-stress;
-        color: $color-base;
+		color: $color-base;
 	}
 }
 </style>
