@@ -87,7 +87,6 @@ const updateTrend = () => {
 			}
 		})
 			.then(res => {
-				console.log(res)
 				options.series = [
 					{
 						name: '收入分类统计',

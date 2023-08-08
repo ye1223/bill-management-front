@@ -4,6 +4,10 @@ import { useRouter } from 'vue-router'
 import { BillTableData, BillTableInfo } from '@/ts/interfaces/bill.ineterface'
 import { appJsonPost, formGet } from '@/api/request'
 import { ElMessage } from 'element-plus'
+import * as XLSX from 'xlsx'
+import FileSaver from 'file-saver'
+// @ts-ignore
+import * as Worker from '@/util/exportToExcel.worker'
 
 const router = useRouter()
 const toAdd = () => {
@@ -43,7 +47,6 @@ const loadTable = () => {
 		url: '/bill/selectPage',
 		data: data
 	}).then(res => {
-		console.log(res.data, res)
 		tableData.list.push(...res.data)
 		tableData.total = res.total
 		tableData.totalIn = res.attributes ? res.attributes.totalIn : 0 // 收入
@@ -85,18 +88,28 @@ const handlePageNowChange = (val: number) => {
 	searchFormData.pageNow = val
 	loadTable()
 }
+
+const handleExport = () => {
+	console.log(tableData.list)
+	const worksheet = XLSX.utils.json_to_sheet(tableData.list)
+	const workbook = XLSX.utils.book_new()
+	XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1')
+	const excelBuffer = XLSX.write(workbook, {
+		bookType: 'xlsx',
+		type: 'array'
+	})
+	const blob = new Blob([excelBuffer], { type: 'application/vnd.ms-excel' })
+	setTimeout(() => {
+		FileSaver.saveAs(blob, '账单') // 下载文件 文件名
+	}, 500)
+}
 </script>
 
 <template>
 	<section class="title-bar">
 		<el-row>
 			<el-col :span="2">
-				<el-button
-					@click="toAdd"
-					type="primary"
-					size="mini"
-					icon="el-icon-plus"
-				>
+				<el-button @click="toAdd" type="primary" size="mini">
 					新增
 				</el-button>
 			</el-col>
@@ -128,8 +141,15 @@ const handlePageNowChange = (val: number) => {
 							type="primary"
 							size="mini"
 							@click="handleSearch"
-							icon="el-icon-search"
 							>查询
+						</el-button>
+					</el-form-item>
+					<el-form-item>
+						<el-button
+							type="primary"
+							size="mini"
+							@click="handleExport"
+							>导出表格
 						</el-button>
 					</el-form-item>
 				</el-form>
@@ -183,7 +203,6 @@ const handlePageNowChange = (val: number) => {
 					<el-button
 						type="primary"
 						size="small"
-						icon="el-icon-edit"
 						@click="handleEdit(scope.$index, scope.row)"
 						>编辑
 					</el-button>

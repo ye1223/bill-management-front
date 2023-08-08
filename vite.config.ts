@@ -37,6 +37,9 @@ export default defineConfig(({ mode, command }) => {
 						'@import "@/assets/css/globalVar.scss";@import "@/assets/css/globalMixin.scss";'
 				}
 			}
+		},
+		worker: {
+			format: 'es'
 		}
 	}
 })
