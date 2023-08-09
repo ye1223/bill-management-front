@@ -101,7 +101,6 @@ const toggleSelection = (rows?: TableList[]) => {
 }
 const handleSelectionChange = (val: TableList[]) => {
 	multipleSelection.value = val
-	console.log(multipleSelection.value)
 }
 
 const deleteSelection = () => {
@@ -206,14 +205,8 @@ const deleteSelection = () => {
 		<div style="margin-top: 20px">
 			<!-- !待完善 -->
 			<el-button
-				:disabled="true"
 				size="small"
-				@click="
-					toggleSelection([
-						tableData.list[1],
-						tableData.list[2]
-					])
-				"
+				@click="toggleSelection([...tableData.list])"
 				>Toggle列表</el-button
 			>
 			<el-button size="small" @click="toggleSelection()">
