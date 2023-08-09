@@ -20,6 +20,8 @@ const handleCommand = (command: string) => {
 		updatePwdStore.changeVisibility()
 	}
 }
+
+const avartarUrl = store.userInfo.headPhoto
 </script>
 
 <template>
@@ -34,10 +36,15 @@ const handleCommand = (command: string) => {
 		>
 			<el-dropdown @command="handleCommand">
 				<span class="el-dropdown-link">
-					欢迎,{{ store.userInfo.realName }}
-					<el-icon class="el-icon--right">
-						<arrow-down
-					/></el-icon>
+					欢迎，{{ store.userInfo.realName }}
+					<el-icon class="arrow">
+						<arrow-down />
+					</el-icon>
+					<el-avatar
+						shape="circle"
+						size="middle"
+						:src="avartarUrl"
+					/>
 				</span>
 				<template #dropdown>
 					<el-dropdown-menu>
@@ -56,9 +63,15 @@ const handleCommand = (command: string) => {
 </template>
 
 <style lang="scss" scoped>
+.arrow {
+	margin: 0 0.5em;
+}
 .el-dropdown-link {
 	cursor: pointer;
 	color: #fff;
 	line-height: $header-height;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 </style>

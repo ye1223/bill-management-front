@@ -33,6 +33,7 @@ const userInfoStore = useUserInfoStore()
 const onSubmit = (props: SlotProps) => {
 	props.infoFormRef.validate((valid, fields) => {
 		if (valid) {
+			console.log(props.infoForm)
 			appJsonPost<UserInfo, UserInfo>({
 				url: '/user/updateById',
 				data: props.infoForm
