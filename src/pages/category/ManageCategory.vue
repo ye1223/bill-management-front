@@ -9,7 +9,7 @@ import {
 	TableData,
 	TableList
 } from '@/ts/interfaces/catogory.interface'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElTable } from 'element-plus'
 
 let addDialogShow = ref(false)
 const openAddDialog = () => {
@@ -84,6 +84,42 @@ const handlePageNowChange = (val: number) => {
 	searchFormData.pageNow = val
 	loadTable()
 }
+
+const multipleSelection = ref<TableList[]>([])
+const multipleTableRef = ref<InstanceType<typeof ElTable>>()
+const toggleSelection = (rows?: TableList[]) => {
+	if (rows) {
+		rows.forEach((row: TableList) => {
+			// TODO: improvement typing when refactor table
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-expect-error
+			multipleTableRef.value!.toggleRowSelection(row, undefined)
+		})
+	} else {
+		multipleTableRef.value!.clearSelection()
+	}
+}
+const handleSelectionChange = (val: TableList[]) => {
+	multipleSelection.value = val
+	console.log(multipleSelection.value)
+}
+
+const deleteSelection = () => {
+	// ?1,3,4 这种格式的querystring
+	const deleteQueryId = multipleSelection.value
+		.map(item => item.id)
+		.join(',')
+	formGet({
+		url: `/category/deleteById?id=${deleteQueryId}`
+	})
+		.then(res => {
+			ElMessage.success(res.msg)
+			loadTable()
+		})
+		.catch(err => {
+			ElMessage.error(err.msg)
+		})
+}
 </script>
 
 <template>
@@ -129,9 +165,12 @@ const handlePageNowChange = (val: number) => {
 			:data="tableData.list"
 			stripe
 			border
-			size="mini"
+			size="default"
 			style="width: 100%"
+			@selection-change="handleSelectionChange"
+			ref="multipleTableRef"
 		>
+			<el-table-column type="selection" width="55" />
 			<el-table-column prop="id" label="系统编号" width="180">
 			</el-table-column>
 			<el-table-column prop="name" label="账单分类名称">
@@ -164,6 +203,31 @@ const handlePageNowChange = (val: number) => {
 				</template>
 			</el-table-column>
 		</el-table>
+		<div style="margin-top: 20px">
+			<!-- !待完善 -->
+			<el-button
+				:disabled="true"
+				size="small"
+				@click="
+					toggleSelection([
+						tableData.list[1],
+						tableData.list[2]
+					])
+				"
+				>Toggle列表</el-button
+			>
+			<el-button size="small" @click="toggleSelection()">
+				清空多选
+			</el-button>
+
+			<el-button
+				size="small"
+				type="danger"
+				@click="deleteSelection()"
+			>
+				删除多选
+			</el-button>
+		</div>
 	</section>
 
 	<!--分页-->
@@ -172,7 +236,7 @@ const handlePageNowChange = (val: number) => {
 			@size-change="handlePageSizeChange"
 			@current-change="handlePageNowChange"
 			:current-page="searchFormData.pageNow"
-			:page-sizes="[5, 10, 15, 20]" 
+			:page-sizes="[5, 10, 15, 20]"
 			:page-size="searchFormData.pageSize"
 			layout="total, sizes, prev, pager, next, jumper"
 			:total="tableData.total"

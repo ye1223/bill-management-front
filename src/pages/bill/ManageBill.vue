@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { reactive, onMounted } from 'vue'
+import { reactive, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { BillTableData, BillTableInfo } from '@/ts/interfaces/bill.ineterface'
 import { appJsonPost, formGet } from '@/api/request'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElTable } from 'element-plus'
 import * as XLSX from 'xlsx'
 import FileSaver from 'file-saver'
 // @ts-ignore
@@ -103,6 +103,42 @@ const handleExport = () => {
 		FileSaver.saveAs(blob, '账单') // 下载文件 文件名
 	}, 500)
 }
+
+// 表格多选
+const multipleSelection = ref<BillTableInfo[]>([])
+const multipleTableRef = ref<InstanceType<typeof ElTable>>()
+const toggleSelection = (rows?: BillTableInfo[]) => {
+	if (rows) {
+		rows.forEach((row: BillTableInfo) => {
+			// TODO: improvement typing when refactor table
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-expect-error
+			multipleTableRef.value!.toggleRowSelection(row, undefined)
+		})
+	} else {
+		multipleTableRef.value!.clearSelection()
+	}
+}
+const handleSelectionChange = (val: BillTableInfo[]) => {
+	multipleSelection.value = val
+}
+
+const deleteSelection = () => {
+	// ?1,3,4 这种格式的querystring
+	const deleteQueryId = multipleSelection.value
+		.map(item => item.id)
+		.join(',')
+	formGet({
+		url: `/bill/deleteById?id=${deleteQueryId}`
+	})
+		.then(res => {
+			ElMessage.success(res.msg)
+			loadTable()
+		})
+		.catch(err => {
+			ElMessage.error(err.msg)
+		})
+}
 </script>
 
 <template>
@@ -139,7 +175,7 @@ const handleExport = () => {
 					<el-form-item>
 						<el-button
 							type="primary"
-							size="mini"
+							size="default"
 							@click="handleSearch"
 							>查询
 						</el-button>
@@ -147,7 +183,7 @@ const handleExport = () => {
 					<el-form-item>
 						<el-button
 							type="primary"
-							size="mini"
+							size="default"
 							@click="handleExport"
 							>导出表格
 						</el-button>
@@ -161,9 +197,12 @@ const handleExport = () => {
 			:data="tableData.list"
 			stripe
 			border
-			size="mini"
+			size="default"
 			style="width: 100%"
+			@selection-change="handleSelectionChange"
+			ref="multipleTableRef"
 		>
+			<el-table-column type="selection" width="55" />
 			<el-table-column prop="id" label="系统编号" width="180">
 			</el-table-column>
 			<el-table-column prop="billTime" label="账单时间">
@@ -204,7 +243,8 @@ const handleExport = () => {
 						type="primary"
 						size="small"
 						@click="handleEdit(scope.$index, scope.row)"
-						>编辑
+					>
+						编辑
 					</el-button>
 
 					<el-popconfirm
@@ -224,6 +264,32 @@ const handleExport = () => {
 				</template>
 			</el-table-column>
 		</el-table>
+		<div style="margin-top: 20px">
+			<!-- !待完善 -->
+			<el-button
+				:disabled="true"
+				size="small"
+				@click="
+					toggleSelection([
+						tableData.list[1],
+						tableData.list[2]
+					])
+				"
+			>
+				Toggle列表
+			</el-button>
+			<el-button size="small" @click="toggleSelection()">
+				清空多选
+			</el-button>
+
+			<el-button
+				size="small"
+				type="danger"
+				@click="deleteSelection()"
+			>
+				删除多选
+			</el-button>
+		</div>
 		<div class="summary">
 			<el-tag type="success">收入:{{ tableData.totalIn }}</el-tag>
 			<el-tag type="warning">支出:{{ tableData.totalOut }}</el-tag>
