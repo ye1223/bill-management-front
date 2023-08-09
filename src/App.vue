@@ -1,10 +1,6 @@
 <template>
 	<div>
-		<!-- App -->
-		<!-- <ElConfigProvider :locale="zhCn"> -->
-			<router-view></router-view>
-		<!-- </ElConfigProvider> -->
-		
+		<router-view></router-view>
 	</div>
 </template>
 <script lang="ts" setup>

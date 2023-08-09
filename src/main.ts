@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
 import Particles from "vue3-particles"
+import './index.css'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import locale from 'element-plus/es/locale/lang/zh-cn'
