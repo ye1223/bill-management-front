@@ -7,7 +7,7 @@ export interface BillInfo {
 	remarks: string
 }
 
-export interface BillTableInfo {
+export interface BillTableInfo extends BillInfo {
 	creatorId: string
 	id: number
 	name: string

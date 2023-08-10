@@ -43,9 +43,9 @@ const onSubmit = (formEl: FormInstance | undefined) => {
 	if (!formEl) return
 	formEl.validate((valid, fields) => {
 		if (valid) {
-			appJsonPost<BillInfo, any>({
+			appJsonPost<[BillInfo], any>({
 				url: '/bill/add',
-				data: { ...formData }
+				data: [{ ...formData }]
 			})
 				.then(res => {
 					ElMessage.success(res.data)

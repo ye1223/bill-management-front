@@ -3,11 +3,12 @@ import { reactive, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { BillTableData, BillTableInfo } from '@/ts/interfaces/bill.ineterface'
 import { appJsonPost, formGet } from '@/api/request'
-import { ElMessage, ElTable } from 'element-plus'
+import { ElMessage, ElTable, UploadRawFile } from 'element-plus'
 import * as XLSX from 'xlsx'
 import FileSaver from 'file-saver'
+import { InfoFilled, UploadFilled } from '@element-plus/icons-vue'
 // @ts-ignore
-import * as Worker from '@/util/exportToExcel.worker'
+// import * as Worker from '@/util/exportToExcel.worker'
 
 const router = useRouter()
 const toAdd = () => {
@@ -89,9 +90,19 @@ const handlePageNowChange = (val: number) => {
 	loadTable()
 }
 
+// 导出Excel表格
 const handleExport = () => {
-	console.log(tableData.list)
-	const worksheet = XLSX.utils.json_to_sheet(tableData.list)
+	// 处理表格数据
+	const excelTable = tableData.list.map(item => {
+		return {
+			'系统编号': item.id,
+			'账单时间': item.billTime,
+			'类型': item.natureName=== '收入'?'收入':'支出',
+			'金额': item.natureName=== '收入'?item.amountMoney:-item.amountMoney,
+			'备注': item.remarks
+		}
+	})
+	const worksheet = XLSX.utils.json_to_sheet(excelTable)
 	const workbook = XLSX.utils.book_new()
 	XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1')
 	const excelBuffer = XLSX.write(workbook, {
@@ -139,6 +150,43 @@ const deleteSelection = () => {
 			ElMessage.error(err.msg)
 		})
 }
+
+// 批量导入
+const importDialogVisible = ref(false)
+const handleImport = () => {
+	importDialogVisible.value = true
+}
+const uploadDisabed = ref(false)
+const handleExcelTemplate = () => {
+	formGet({
+		url: '/bill/downloadTemplate'
+	}).then(res => {
+		console.log(res)
+	})
+}
+// excel导入之前校验
+const handleBeforeFileUpload = (rawFile: UploadRawFile) => {
+	//xlsx 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+	const isExcel =
+		rawFile.type === 'application/vnd.ms-excel'
+	const isLt2M = rawFile.size / 1024 / 1024 < 2
+	if (!isExcel) {
+		ElMessage.error('上传Excel文件只能是 xls格式')
+	}
+	if (!isLt2M) {
+		ElMessage.error('上传Excel大小不能超过 2MB!')
+	}
+}
+const handleFileSuccess = (response: any) => {
+	console.log(response)
+	ElMessage.success('文件上传成功!')
+}
+
+const handleFileError = (error: Error) => {
+	ElMessage.error(`${error}`)
+	// 抛出异常，终端之后上传的逻辑
+	throw new Error(`${error}`)
+}
 </script>
 
 <template>
@@ -182,15 +230,57 @@ const deleteSelection = () => {
 					</el-form-item>
 					<el-form-item>
 						<el-button
+							type="success"
+							size="default"
+							@click="handleImport"
+						>
+							批量导入
+						</el-button>
+					</el-form-item>
+					<el-form-item>
+						<el-button
 							type="primary"
 							size="default"
 							@click="handleExport"
-							>导出表格
+						>
+							导出表格
 						</el-button>
 					</el-form-item>
 				</el-form>
 			</el-col>
 		</el-row>
+
+		<el-dialog v-model="importDialogVisible" width="30%">
+			<el-upload
+				class="upload-demo"
+				drag
+				action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
+				:multiple="false"
+				:auto-upload="true"
+				:disabled="uploadDisabed"
+				:before-upload="handleBeforeFileUpload"
+				:on-success="handleFileSuccess" 
+      			:on-error="handleFileError"
+			>
+				<el-icon class="el-icon--upload">
+					<upload-filled />
+				</el-icon>
+				<div class="el-upload__text">
+					将文件拖动于此或<em>点击上传</em>
+				</div>
+				<template #tip>
+					<div class="el-upload__tip">
+						<el-button @click="handleExcelTemplate"
+							>下载上传模版</el-button
+						>
+						<br />
+						<span style="color: red"
+							>*必须使用上传模版否则会出错误</span
+						>
+					</div>
+				</template>
+			</el-upload>
+		</el-dialog>
 	</section>
 	<section>
 		<el-table
@@ -216,9 +306,9 @@ const deleteSelection = () => {
 									? 'success'
 									: 'danger'
 							"
-							>{{ scope.row.natureName }}</el-tag
 						>
-						<!-- {{ scope.row.natureName }} -->
+							{{ scope.row.natureName }}
+						</el-tag>
 						-
 						{{ scope.row.categoryName }}
 					</span>
@@ -265,16 +355,9 @@ const deleteSelection = () => {
 			</el-table-column>
 		</el-table>
 		<div style="margin-top: 20px">
-			<!-- !待完善 -->
 			<el-button
-				:disabled="true"
 				size="small"
-				@click="
-					toggleSelection([
-						tableData.list[1],
-						tableData.list[2]
-					])
-				"
+				@click="toggleSelection([...tableData.list])"
 			>
 				Toggle列表
 			</el-button>
@@ -282,13 +365,21 @@ const deleteSelection = () => {
 				清空多选
 			</el-button>
 
-			<el-button
-				size="small"
-				type="danger"
-				@click="deleteSelection()"
+			<el-popconfirm
+				width="220"
+				confirm-button-text="是"
+				cancel-button-text="否"
+				:icon="InfoFilled"
+				icon-color="#626AEF"
+				title="确定删除选中的部分?"
+				@confirm="deleteSelection"
 			>
-				删除多选
-			</el-button>
+				<template #reference>
+					<el-button size="small" type="danger">
+						删除多选
+					</el-button>
+				</template>
+			</el-popconfirm>
 		</div>
 		<div class="summary">
 			<el-tag type="success">收入:{{ tableData.totalIn }}</el-tag>
@@ -313,4 +404,8 @@ const deleteSelection = () => {
 	</section>
 </template>
 
-<style lang=""></style>
+<style lang="scss" scoped>
+.el-upload__tip {
+	text-align: center;
+}
+</style>
