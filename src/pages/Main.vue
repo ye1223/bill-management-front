@@ -20,29 +20,30 @@ import Menu from '@/components/Main/Menu.vue'
 	</el-container>
 </template>
 
-<style lang="scss" scoped>
+<style scoped>
 .layout-container {
-	height: 100%;
+  height: 100%;
+}
 
-	.el-header {
-		background-color: $color-base;
-		color: #fff;
-		padding-left: 0;
-	}
+.layout-container .el-header {
+  background-color: rgb(23, 26, 37);
+  color: #fff;
+  padding-left: 0;
+}
 
-	.el-aside {
-		background-color: $color-base;
-		height: $aside-height;
-	}
-	.el-main {
-		padding: 10px;
-	}
+.layout-container .el-aside {
+  background-color: rgb(23, 26, 37);
+  height: calc(100vh - 60px);
+}
+
+.layout-container .el-main {
+  padding: 10px;
 }
 
 /* 侧边栏背景 */
-aside ul,
-:deep aside li {
-	background-color: $color-base;
+aside ul, 
+aside li {
+  background-color: rgb(23, 26, 37);
 }
 
 /*侧边栏悬浮时的背景*/

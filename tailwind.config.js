@@ -2,12 +2,9 @@
 export default {
 	content: [
 		'./index.html',
-		'./src/**/*.{js,ts,jsx,tsx}',
+		'./src/**/*.{vue,js,ts,jsx,tsx}',
 		'./node_modules/flowbite/**/*.js'
 	],
-  plugins: [
-    require('flowbite/plugin')
-  ],
 	darkMode: 'class',
 	theme: {
 		extend: {
@@ -64,4 +61,5 @@ export default {
 			]
 		}
 	},
+	plugins: [require('flowbite/plugin')]
 }

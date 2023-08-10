@@ -21,8 +21,8 @@ module.exports = {
 	// always 总是有括号
 	arrowParens: 'avoid',
 	comment: true,
-	htmlWhitespaceSensitivity: 'ignore',
-	html: {
-		wrapAttributes: 'auto' // html标签属性不换行
-	}
+	// htmlWhitespaceSensitivity: 'ignore',
+	// html: {
+	// 	wrapAttributes: 'auto' // html标签属性不换行
+	// }
 }

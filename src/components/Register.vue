@@ -102,7 +102,7 @@ const isShow = ref(false)
 	<Vcode :show="isShow" @success="onSuccess" @close="onClose" />
 </template>
 
-<style lang="scss" scoped>
+<style scoped>
 :global(.vue-puzzle-vcode) {
 	z-index: 10000;
 }

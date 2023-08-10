@@ -77,23 +77,23 @@ const logout = () => {
 	</el-menu>
 </template>
 
-<style lang="scss" scoped>
-/*避免 el-menu-item 多1px*/
+<style scoped>
+/* 避免 el-menu-item 多1px */
 .el-menu {
-	border-right-width: 0;
+  border-right-width: 0; 
+}
 
-	/*css修改element-ui样式不生效,通过>>>深层穿透指定;否则需要去掉scoped*/
-	.el-submenu div.el-submenu__title:hover {
-		background-color: $color-stress !important;
-		color: $color-base;
-	}
+/* css修改element-ui样式不生效,通过>>>深层穿透指定;否则需要去掉scoped */
+.el-menu .el-submenu div.el-submenu__title:hover {
+  background-color: rgb(232, 254, 203) !important; 
+  color: rgb(23, 26, 37);
+}
 
-	/*菜单激活时的背景*/
-	.el-menu-item:focus,
-	.el-menu-item:hover,
-	.el-menu-item.is-active {
-		background-color: $color-stress;
-		color: $color-base;
-	}
+/* 菜单激活时的背景 */  
+.el-menu-item:focus,
+.el-menu-item:hover, 
+.el-menu-item.is-active {
+  background-color: rgb(232, 254, 203);
+  color: rgb(23, 26, 37);
 }
 </style>

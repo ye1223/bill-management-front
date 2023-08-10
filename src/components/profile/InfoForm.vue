@@ -111,7 +111,7 @@ const handleError = () => {
 	</el-form>
 </template>
 
-<style lang="scss" scoped>
+<style scoped>
 :deep(.avatar) {
 	width: 178px;
 	height: 178px;

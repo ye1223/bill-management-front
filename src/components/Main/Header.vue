@@ -62,14 +62,14 @@ const avartarUrl = store.userInfo.headPhoto
 	<UpdatePwd />
 </template>
 
-<style lang="scss" scoped>
+<style scoped>
 .arrow {
 	margin: 0 0.5em;
 }
 .el-dropdown-link {
 	cursor: pointer;
 	color: #fff;
-	line-height: $header-height;
+	line-height:60px;
 	display: flex;
 	justify-content: center;
 	align-items: center;

@@ -82,4 +82,4 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
 	</el-dialog>
 </template>
 
-<style lang="scss" scoped></style>
+<style scoped></style>
