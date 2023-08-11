@@ -8,6 +8,9 @@ type TypeId = {
 export interface ApiFormGetParams {
 	url: string
 	params?: TypeId
+	Authorization?: string
+	responseType?: string
+	contentType?: string
 }
 
 export interface ApiFormPostParams<P> {

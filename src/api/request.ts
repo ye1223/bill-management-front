@@ -15,8 +15,15 @@ export async function formGet<T>(
 	config: ApiFormGetParams
 ): Promise<ApiResult<T>> {
 	const response = await formGetInstance.get<ApiResult<T>>(config.url, {
-		params: config.params
+		params: config.params,
+		headers: {
+			Authorization: config.Authorization,
+			"Content-Type": config.contentType
+		},
+		responseType: config.responseType as any,
+		responseEncoding: 'utf8'
 	})
+	console.log(config)
 	//@ts-ignore
 	return response
 }

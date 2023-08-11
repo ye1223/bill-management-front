@@ -7,6 +7,8 @@ import { ElMessage, ElTable, UploadRawFile } from 'element-plus'
 import * as XLSX from 'xlsx'
 import FileSaver from 'file-saver'
 import { InfoFilled, UploadFilled } from '@element-plus/icons-vue'
+import useUserInfoStore from '@/store/userInfoStore'
+import { BASE_URL } from '@/constants'
 // @ts-ignore
 // import * as Worker from '@/util/exportToExcel.worker'
 
@@ -95,11 +97,14 @@ const handleExport = () => {
 	// 处理表格数据
 	const excelTable = tableData.list.map(item => {
 		return {
-			'系统编号': item.id,
-			'账单时间': item.billTime,
-			'类型': item.natureName=== '收入'?'收入':'支出',
-			'金额': item.natureName=== '收入'?item.amountMoney:-item.amountMoney,
-			'备注': item.remarks
+			系统编号: item.id,
+			账单时间: item.billTime,
+			类型: item.natureName === '收入' ? '收入' : '支出',
+			金额:
+				item.natureName === '收入'
+					? item.amountMoney
+					: -item.amountMoney,
+			备注: item.remarks
 		}
 	})
 	const worksheet = XLSX.utils.json_to_sheet(excelTable)
@@ -157,29 +162,65 @@ const handleImport = () => {
 	importDialogVisible.value = true
 }
 const uploadDisabed = ref(false)
+
+const userInfoStore = useUserInfoStore()
 const handleExcelTemplate = () => {
-	formGet({
-		url: '/bill/downloadTemplate'
-	}).then(res => {
-		console.log(res)
+	formGet<BlobPart>({
+		url: 'bill/downloadTemplate',
+		Authorization: userInfoStore.userInfo.token,
+		responseType: 'blob',
+		contentType: 'application/octet-stream'
 	})
+		.then(res => {
+			// @ts-ignore
+			return new Promise(resolve => {
+				resolve(res)
+			})
+		})
+		.then(res => {
+			// @ts-ignore
+			const blob = new Blob([res], {
+				type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+			})
+			const url = URL.createObjectURL(blob)
+			const a = document.createElement('a')
+			a.href = url
+			a.download = 'bill_template.xlsx'
+			document.body.appendChild(a)
+			a.click()
+			document.body.removeChild(a)
+			URL.revokeObjectURL(url)
+		})
+		.catch(err => {
+			const blob = new Blob([err], {
+				type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+			})
+			const url = URL.createObjectURL(blob)
+			const a = document.createElement('a')
+			a.href = url
+			a.download = 'bill_template.xlsx'
+			document.body.appendChild(a)
+			a.click()
+			document.body.removeChild(a)
+			URL.revokeObjectURL(url)
+		})
 }
 // excel导入之前校验
 const handleBeforeFileUpload = (rawFile: UploadRawFile) => {
 	//xlsx 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-	const isExcel =
-		rawFile.type === 'application/vnd.ms-excel'
+	const isExcel = rawFile.type === 'application/vnd.ms-excel' || rawFile.type=== 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 	const isLt2M = rawFile.size / 1024 / 1024 < 2
 	if (!isExcel) {
-		ElMessage.error('上传Excel文件只能是 xls格式')
+		ElMessage.error('上传Excel文件只能是 xls/x格式')
 	}
 	if (!isLt2M) {
 		ElMessage.error('上传Excel大小不能超过 2MB!')
 	}
 }
 const handleFileSuccess = (response: any) => {
-	console.log(response)
-	ElMessage.success('文件上传成功!')
+	importDialogVisible.value = false
+	ElMessage.success(response.data)
+	loadTable()
 }
 
 const handleFileError = (error: Error) => {
@@ -252,15 +293,20 @@ const handleFileError = (error: Error) => {
 
 		<el-dialog v-model="importDialogVisible" width="30%">
 			<el-upload
-				class="upload-demo"
 				drag
-				action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
-				:multiple="false"
+				method="post"
+				name="file"
+				:action="BASE_URL+'/bill/upload'"
+				:headers="{
+					Authorization: userInfoStore.userInfo.token
+				}"
 				:auto-upload="true"
+				:multiple="false"
+				:show-file-list="false"
 				:disabled="uploadDisabed"
 				:before-upload="handleBeforeFileUpload"
-				:on-success="handleFileSuccess" 
-      			:on-error="handleFileError"
+				:on-success="handleFileSuccess"
+				:on-error="handleFileError"
 			>
 				<el-icon class="el-icon--upload">
 					<upload-filled />

@@ -83,6 +83,7 @@ const handleError = () => {
 				:headers="{
 					Authorization: userInfoStore.userInfo.token
 				}"
+				:auto-upload="true"
 				:multiple="false"
 				:on-success="handleSucess"
 				:on-error="handleError"
