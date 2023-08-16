@@ -22,11 +22,13 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "preserve",
+    "jsxFactory": "h", //新增
+    "jsxFragmentFactory": "Fragment",
     /* Linting */
     "strict": true,
     "noUnusedLocals": false,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
   },
   "include": [
     "src/**/*.ts",
