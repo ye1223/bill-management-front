@@ -17,7 +17,7 @@ const ToastContainer = createApp({
 			toastProps: {
 				visible: false,
 				type: '',
-				message: ''
+				message: '' 
 			} as unknown as ToastProps
 		}
 	}

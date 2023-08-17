@@ -9,6 +9,22 @@ import { useRouter } from 'vue-router'
 import { setItem } from '@/util/storage'
 import Toast from '@/components/UI/Toast/index'
 import Register from '@/components/Register.vue'
+// 表单验证
+import type { Rules } from 'async-validator'
+import Schema from 'async-validator'
+
+const rules: Rules = {
+	name: {
+		type: 'string', // 使用预设类型校验规则
+		required: true // 必填
+	},
+	pwd: {
+		type: 'string',
+		required: true
+	}
+}
+// 创建校验对象
+const validator = new Schema(rules)
 
 const formRef = ref()
 const form = reactive<LoginForm>({
@@ -16,24 +32,29 @@ const form = reactive<LoginForm>({
 	pwd: ''
 })
 
-
 const userInfoStore = useUserInfoStore()
 const router = useRouter()
 const handleLogin = () => {
 	// todo 引入表单校验
-	appJsonPost<LoginForm, LoginResult>({
-		url: '/user/login',
-		data: form
+	validator.validate(form, (errors, fields) => {
+		if (errors) {
+			// console.log(errors)
+		} else {
+			appJsonPost<LoginForm, LoginResult>({
+				url: '/user/login',
+				data: fields as LoginForm
+			})
+				.then(res => {
+					userInfoStore.changeUserInfo(res.data)
+					setItem(TOKEN_KEY, res.data.token)
+					router.replace('/category/manage')
+					Toast.success('欢迎进入账单管理系统!')
+				})
+				.catch(err => {
+					Toast.error(err.msg)
+				})
+		}
 	})
-		.then(res => {
-			userInfoStore.changeUserInfo(res.data)
-			setItem(TOKEN_KEY, res.data.token)
-			router.replace('/category/manage')
-			Toast.success('欢迎进入账单管理系统!')
-		})
-		.catch(err => {
-			Toast.error(err.msg)
-		})
 }
 
 const registerDiaVisible = ref(false)
@@ -48,7 +69,7 @@ const openRegisterDia = () => {
 			class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0"
 		>
 			<a
-				href='javascript:;'
+				href="javascript:;"
 				class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
 			>
 				<!-- <img class="w-8 h-8 mr-2" alt="logo" /> -->
@@ -65,7 +86,7 @@ const openRegisterDia = () => {
 					</h1>
 					<form
 						class="space-y-4 md:space-y-6"
-						action="#"
+						onsubmit="return false"
 						ref="formRef"
 					>
 						<div>
@@ -134,6 +155,7 @@ const openRegisterDia = () => {
 							</a>
 						</div>
 						<button
+							type="button"
 							@click="handleLogin"
 							class="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
 						>
@@ -144,7 +166,7 @@ const openRegisterDia = () => {
 						>
 							还没有账号？
 							<a
-								href='javascript:;'
+								href="javascript:;"
 								class="font-medium text-primary-600 hover:underline dark:text-primary-500"
 								@click="openRegisterDia"
 							>
@@ -156,8 +178,6 @@ const openRegisterDia = () => {
 			</div>
 		</div>
 	</section>
-
-
 
 	<Register v-model:registerDiaVisible="registerDiaVisible" />
 </template>
