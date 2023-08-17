@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, watch } from 'vue'
 import { appJsonPost } from '@/api/request'
 import { LoginForm } from '@/ts/interfaces/login.interface'
 import { LoginResult } from '@/ts/interfaces/request.interface'
@@ -35,7 +35,6 @@ const form = reactive<LoginForm>({
 const userInfoStore = useUserInfoStore()
 const router = useRouter()
 const handleLogin = () => {
-	// todo 引入表单校验
 	validator.validate(form, (errors, fields) => {
 		if (errors) {
 			// console.log(errors)
@@ -61,10 +60,16 @@ const registerDiaVisible = ref(false)
 const openRegisterDia = () => {
 	registerDiaVisible.value = true
 }
+
+const remember = ref()
+watch(()=>remember.value, ()=>{
+	// 账号密码存于localStorage
+
+})
 </script>
 
 <template>
-	<section class="bg-gray-50 dark:bg-gray-900">
+	<section class="h-screen bg-gray-50 dark:bg-gray-900">
 		<div
 			class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0"
 		>
@@ -132,6 +137,7 @@ const openRegisterDia = () => {
 								>
 									<input
 										id="remember"
+										v-model="remember"
 										aria-describedby="remember"
 										type="checkbox"
 										class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
@@ -148,7 +154,7 @@ const openRegisterDia = () => {
 								</div>
 							</div>
 							<a
-								href="#"
+								href="javascript:void(0);"
 								class="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500"
 							>
 								忘记密码？
